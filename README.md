@@ -1,67 +1,60 @@
-# Alephium Next.js Template
+# My React dApp
 
-This is a Alephium template project for [Next.js](https://nextjs.org/) app router.
+This monorepo was designed to provide a developer-friendly experience to Alephium ecosystem newcomers. It is split into 2 parts:
 
-This template project demonstrates how to implement a simple token
-faucet and expose it with a Web UI using Next.js.
+- app: contains the React frontend part of the dApp
+- contracts: contains the dApp contracts
 
-## Getting Started
+It uses **yarn workspaces** to manage both app and contract projects from the monorepo root.
 
-### Install
+## Local development
+
+To get started quickly, follow these steps:
+
+### Set up a devnet
+
+Start a local devnet for testing and development. Please refer to the [Getting Started documentation](https://docs.alephium.org/full-node/getting-started#devnet).
+
+### Install dependencies
 
 ```
-npm install
+yarn install
 ```
 
-### Start a local devnet for testing and development
+### Compile the contracts
 
-Follow the instructions on the [Alephium Devnet Docker Guide](https://github.com/alephium/alephium-stack?tab=readme-ov-file#devnet) to start a local devnet.
-
-For other options, see the [Alephium Devnet Guide](https://docs.alephium.org/full-node/getting-started#devnet).
-
-### Deploy the token faucet contract
-
-```bash
-# In this case devnet
-npm run devnet:deploy
+```
+yarn compile
 ```
 
-This will compile and deploy the token faucet contracts to all of the
-4 groups on devnet.
+### Deploy the contracts
 
-Before deployment, you might want to just compile and test the
-contracts first:
-
-```bash
-# Compile
-npm run compile
-
-# Test
-npm run test
+```
+yarn deploy
 ```
 
-### Run the development server
+### Build the contracts package
 
-```bash
-npm run dev
-# or
-yarn dev
+```
+yarn build:contracts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser
-to see the token faucet application.
+### Run the app
 
-Download the [Alephium Extension Wallet](https://github.com/alephium/extension-wallet)
-to interact with the application.
+```
+yarn start
+```
 
-## Learn More
+### Install an Alephium wallet
 
-To learn more about smart contract development on Alephium, take a
-look at the following resources:
+Download an [Alephium wallet](https://alephium.org/#wallets), and connect it to your devnet dApp.
 
-- [Alephium Web3 SDK Guide](https://docs.alephium.org/sdk/getting-started/) - Learn about Alephium Web3 SDK
-- [Ralph Language](https://docs.alephium.org/ralph/) - A guide to the Ralph programming language
+## Testnet, Mainnet, and More
 
-You can check out the [Alephium GitHub
-repositories](https://github.com/alephium) for more information - your
-feedback and contributions are welcome!
+You could use yarn workspace to run commands in the contracts or app directory.
+
+```
+yarn <my-contracts|my-dapp> <command>
+```
+
+You could also get some testnet tokens from the [Faucet](https://docs.alephium.org/infrastructure/public-services/#testnet-faucet).
