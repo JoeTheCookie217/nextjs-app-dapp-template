@@ -1,61 +1,72 @@
-// Contract Airdrop () {
-//     mapping[Address, U256] failTransferList
+Contract Airdrop () {
+    mapping[Address, U256] failTransferList
     
-//     enum ErrorCodes {
-//         LengthDontMatch = 0
-//         NeedApproval = 1
-//         WrongAmount = 2
-//     }
+    enum ErrorCodes {
+        LengthDontMatch = 0
+        // NeedApproval = 1
+        WrongAmount = 2
+        NotAuthorized = 3
+        // Failed = 4
+    }
 
-//     pub fn multiTransferToken(
-//         token: ByteVec
-//         // address[] calldata addresses,
-//         // uint256[] calldata amounts
-//     ) -> () {
-//         assert!(
-//             addresses.length == amounts.length,
-//             ErrorCodes.LengthDontMatch
-//         )
-//         let token = IERC20(token) 
-//         let amountSum = getSum(amounts)
-//         assert!(
-//             token.allowance(msg.sender, address(this)) > amountSum,
-//             ErrorCodes.NeedApproval
-//         )
-//         for (let mut i = 0; i < addresses.length; i = i + 1) {
-//             token.transferFrom(msg.sender, addresses[i], amounts[i])
-//         }
-//     }
+    @using(checkExternalCaller = false, preapprovedAssets = true)
+    pub fn multiTransferToken(
+        tokenId: ByteVec
+        // address[] calldata addresses,
+        // uint256[] calldata amounts
+    ) -> () {
+        let addresses = [@1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH]
+        let amounts = [1e18]
+        assert!(
+            len!(addresses) == len!(amounts),
+            ErrorCodes.LengthDontMatch
+        )
+        // let token = Token(tokenId)
+        // let amountSum = getSum(amounts)
+        // assert!(
+        //     token.allowance(callerAddress!(), address(this)) > amountSum,
+        //     ErrorCodes.NeedApproval
+        // )
+        for (let mut i = 0; i < len!(addresses); i = i + 1) {
+            transferToken!(callerAddress!(), addresses[i], tokenId, amounts[i])
+        }
+    }
 
-//     pub fn multiTransferETH(
-//         // addresses,
-//         // amounts
-//     ) -> () {
-//         assert!(
-//             addresses.length == amounts.length,
-//             ErrorCodes.LengthDontMatch
-//         )
-//         let amountSum = getSum(amounts)
-//         assert!(msg.value == amountSum, ErrorCodes.WrongAmount)
-//         for (let mut i = 0; i < addresses.length;i = i + 1) {
-//             (bool success, ) = addresses[i].call{value: amounts[i]}("")
-//             if (!success) {
-//                 failTransferList[addresses[i]] = amounts[i]
-//             }
-//         }
-//     }
+    @using(checkExternalCaller = false, preapprovedAssets = true)
+    pub fn multiTransferETH(
+        value: U256
+        // addresses,
+        // amounts
+    ) -> () {
+        let addresses = [@1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH]
+        let amounts = [1e18]
+        assert!(
+            len!(addresses) == len!(amounts),
+            ErrorCodes.LengthDontMatch
+        )
+        let amountSum = getSum()
+        assert!(value == amountSum, ErrorCodes.WrongAmount)
+        for (let mut i = 0; i < len!(addresses); i = i + 1) {
+            transferToken!(callerAddress!(), addresses[i], ALPH, amounts[i])
+        }
+    }
 
-//     pub fn withdrawFromFailList( to: Address) -> () {
-//         uint failAmount = failTransferList[msg.sender]
-//         assert!(failAmount > 0, "You are not in failed list")
-//         failTransferList[msg.sender] = 0
-//         // (bool success, ) = to.call{value: failAmount}("")
-//         transferTokenFromSelf!(to, alph, failAmount)
-//         assert!(success, "Fail withdraw")
-//     }
+    @using(checkExternalCaller = false, preapprovedAssets = true, assetsInContract = true)
+    pub fn withdrawFromFailList( to: Address) -> () {
+        let failAmount = failTransferList[callerAddress!()]
+        assert!(failAmount > 0, ErrorCodes.NotAuthorized)
+        failTransferList[callerAddress!()] = 0
+        transferTokenFromSelf!(to, ALPH, failAmount)
+        // assert!(success, ErrorCodes.Failed)
+    }
 
-//     pub fn getSum(uint256[] calldata _arr) -> (U256) {
-//         for (let mut i = 0; i < _arr.length; i = i+ 1) sum = sum + _arr[i]
-//     }
-// }
+    pub fn getSum(
+        // arr: U256[]
+    ) -> (U256) {
+        let arr = [1e18, 2e18, 3e18]
+        let mut sum = 0
+        for (let mut i = 0; i < len!(arr); i = i+ 1) {sum = sum + arr[i]}
+        return sum
+    }
+}
 

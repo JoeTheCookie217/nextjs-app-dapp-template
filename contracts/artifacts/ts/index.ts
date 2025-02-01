@@ -2,8 +2,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export * from "./Airdrop";
 export * from "./DutchAuction";
 export * from "./PaymentSplit";
+export * from "./Token";
 export * from "./TokenLocker";
 export * from "./TokenVesting";
 export * from "./scripts";

@@ -11,11 +11,23 @@
     "skipAbstractContractCheck": false
   },
   "infos": {
+    "Airdrop": {
+      "sourceFile": "Airdrop.ral",
+      "sourceCodeHash": "95f4cb36772d708f29574b1b713820f3e4445502fafa1d1749d4d926bc2c9064",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "fe4ab3d362a29f8ab4b5ad50438d1011a76227a0a29db5704f6a7adf691f0875"
+    },
     "DutchAuction": {
       "sourceFile": "DutchAuction.ral",
       "sourceCodeHash": "64c8271e5d6e96329d639f6b7587076026c1caf208403c1f9cb78449e409173a",
       "bytecodeDebugPatch": "=15-1+e=3-5+7=3-1+3=3-1+4=3-1+2=3-1+3=2-2+20=4+414e=76+000216007e02=499-1+d=18+16007e020000=50",
       "codeHashDebug": "83abe276bfe1db722662986652a2489130438dc39fdcce79b87f88144313e029"
+    },
+    "IFungibleToken": {
+      "sourceFile": "../../node_modules/@alephium/web3/std/fungible_token_interface.ral",
+      "sourceCodeHash": "62910bf11e1eeb6cb2fd468626ff606a9b06306b2b81590c3b10f6deb5966bde",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": ""
     },
     "INFT": {
       "sourceFile": "../../node_modules/@alephium/web3/std/nft_interface.ral",
@@ -28,6 +40,12 @@
       "sourceCodeHash": "68ff20b1ea5c31e965d9394add742b0356f52359e623be3c036c1eef1ca1d7a8",
       "bytecodeDebugPatch": "=10-6+c6=2-2=1-1=1-1=2-2+75=2-1=1+0=1-3+22b=2+4=2+256426b=94-2+35=126+7a7e0214696e73657274206174206d617020706174683a2000=12+1601a0037e03086265666f72653a20022c2000=14+1601a0037e030761667465723a20022c2000=473-1+4=102+1=1-1=52+7a7e021472656d6f7665206174206d617020706174683a2000=186",
       "codeHashDebug": "c059aa4d1e233716dca31cc85ad0ff7cfcc474494beefac1c37a6b980fc74b09"
+    },
+    "Token": {
+      "sourceFile": "token.ral",
+      "sourceCodeHash": "d577ddd6751732ca003a1dfecc282fed09c96b37d6b15d4649f416a7672f43cf",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "3ef6b0e92af5358d2f9872825f6e90387fea4a832864748d71e43437329e37e0"
     },
     "TokenLocker": {
       "sourceFile": "TokenLocker.ral",

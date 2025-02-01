@@ -1,0 +1,53 @@
+{
+  "constants": [
+    {
+      "name": "MINUTES",
+      "value": {
+        "type": "U256",
+        "value": "60000"
+      }
+    },
+    {
+      "name": "COLLECTION_SIZE",
+      "value": {
+        "type": "U256",
+        "value": "10000"
+      }
+    },
+    {
+      "name": "AUCTION_START_PRICE",
+      "value": {
+        "type": "U256",
+        "value": "1000000000000000000"
+      }
+    },
+    {
+      "name": "AUCTION_END_PRICE",
+      "value": {
+        "type": "U256",
+        "value": "100000000000000000"
+      }
+    },
+    {
+      "name": "AUCTION_TIME",
+      "value": {
+        "type": "U256",
+        "value": "600000"
+      }
+    },
+    {
+      "name": "AUCTION_DROP_INTERVAL",
+      "value": {
+        "type": "U256",
+        "value": "60000"
+      }
+    },
+    {
+      "name": "AUCTION_DROP_PER_STEP",
+      "value": {
+        "type": "U256",
+        "value": "90000000000000000"
+      }
+    }
+  ]
+}

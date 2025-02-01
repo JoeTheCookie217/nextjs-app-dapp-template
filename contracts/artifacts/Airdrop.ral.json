@@ -1,0 +1,99 @@
+{
+  "version": "v3.11.1",
+  "name": "Airdrop",
+  "bytecode": "0004406e40e5412841810103010400402bd38c0ffb351500bee85f379545a2ed9f6cceb331288842f378cf0f04012ad4ac8824aae7d6f80a170113c40de0b6b3a7640000170216010d16020d2f0c7b0c1703160316010d314c18b416037a0d314d0d2a78160016037a0d314d0e2a78aa16030d2a17034a2301030105004031d3649048751500bee85f379545a2ed9f6cceb331288842f378cf0f04012ad4ac8824aae7d6f80a170113c40de0b6b3a7640000170216010d16020d2f0c7b00031703160016032f0e7b0c1704160416010d314c17b416047a0d314d0d2a7816047a0d314d0e2a78a716040d2a17044a2401010102001dd344702e6e0c0d0d140a5f5f6d61705f5f305f5fb44744cb0101170116010c330f7b0c0c0e0c140a5f5f6d61705f5f305f5fb44744cb010216001601a801000005014022d3a827cd9913c40de0b6b3a764000013c41bc16d674ec8000013c429a2241af62c00001702170117000c17030c170416041600160116020f314c0e160316047a0f314d782a170316040d2a17044a2b160302",
+  "codeHash": "fe4ab3d362a29f8ab4b5ad50438d1011a76227a0a29db5704f6a7adf691f0875",
+  "fieldsSig": {
+    "names": [],
+    "types": [],
+    "isMutable": []
+  },
+  "eventsSig": [],
+  "functions": [
+    {
+      "name": "multiTransferToken",
+      "paramNames": [
+        "tokenId"
+      ],
+      "paramTypes": [
+        "ByteVec"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "multiTransferETH",
+      "paramNames": [
+        "value"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "withdrawFromFailList",
+      "paramNames": [
+        "to"
+      ],
+      "paramTypes": [
+        "Address"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "getSum",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    }
+  ],
+  "constants": [],
+  "enums": [
+    {
+      "name": "ErrorCodes",
+      "fields": [
+        {
+          "name": "LengthDontMatch",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        },
+        {
+          "name": "WrongAmount",
+          "value": {
+            "type": "U256",
+            "value": "2"
+          }
+        },
+        {
+          "name": "NotAuthorized",
+          "value": {
+            "type": "U256",
+            "value": "3"
+          }
+        }
+      ]
+    }
+  ],
+  "mapsSig": {
+    "names": [
+      "failTransferList"
+    ],
+    "types": [
+      "Map[Address,U256]"
+    ]
+  }
+}
