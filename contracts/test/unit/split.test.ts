@@ -214,7 +214,7 @@ describe('unit tests', () => {
   it('test assert', async () => {
     // test that assertion failed in the withdraw function
     await expectAssertionError(
-      PaymentSplit.tests.addPayeeInternal({
+      PaymentSplit.tests.addPayee({
         ...testParamsFixture,
         testArgs: { shares: 0n, account: randomContractAddress() }
       }),

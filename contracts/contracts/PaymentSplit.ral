@@ -42,16 +42,12 @@ Contract PaymentSplit(
         emit PaymentReceived(callerAddress!(), dustAmount!())
     }
 
-    @using(checkExternalCaller = false)
-    pub fn addPayee(account: Address, shares: U256) -> () {
-        addPayeeInternal(account, shares)
-    }
-
     @using(updateFields = true, preapprovedAssets = true)
-    fn addPayeeInternal(account: Address, shares: U256) -> () {
+    pub fn addPayee(account: Address, shares: U256) -> () {
         // assert!(account != new Address(""), ErrorCodes.InvalidPayee)
         assert!(shares > 0, ErrorCodes.InvalidShares)
         assert!(sharesMap.contains!(account) == false, ErrorCodes.AccountHasShares)
+        checkCaller!(callerAddress!() == owner, ErrorCodes.NotAuthorized)
 
         // payees.push(account)
         let depositor = callerAddress!()
@@ -60,6 +56,10 @@ Contract PaymentSplit(
         numPayeesRegistered = numPayeesRegistered + 1
         emit PayeeAdded(account, shares)
     }
+
+    // @using(updateFields = true, preapprovedAssets = true)
+    // fn addPayeeInternal(account: Address, shares: U256) -> () {
+    // }
 
     @using(updateFields = true, checkExternalCaller = false, assetsInContract = true)
     pub fn release(account: Address) -> () {
@@ -125,7 +125,7 @@ Contract PaymentSplit(
 
     // HELPERS (Solidity modifiers like)
 
-    fn checkParams() -> () {
-        assert!(numPayees > 0, ErrorCodes.InvalidSetup)
-    }
+    // fn checkParams() -> () {
+    //     assert!(numPayees > 0, ErrorCodes.InvalidSetup)
+    // }
 }

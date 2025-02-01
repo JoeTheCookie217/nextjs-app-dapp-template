@@ -74,10 +74,6 @@ export namespace PaymentSplitTypes {
       params: CallContractParams<{ account: Address; shares: bigint }>;
       result: CallContractResult<null>;
     };
-    addPayeeInternal: {
-      params: CallContractParams<{ account: Address; shares: bigint }>;
-      result: CallContractResult<null>;
-    };
     release: {
       params: CallContractParams<{ account: Address }>;
       result: CallContractResult<null>;
@@ -133,13 +129,6 @@ export namespace PaymentSplitTypes {
       result: SignExecuteScriptTxResult;
     };
     addPayee: {
-      params: SignExecuteContractMethodParams<{
-        account: Address;
-        shares: bigint;
-      }>;
-      result: SignExecuteScriptTxResult;
-    };
-    addPayeeInternal: {
       params: SignExecuteContractMethodParams<{
         account: Address;
         shares: bigint;
@@ -241,20 +230,6 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<null, PaymentSplitTypes.Maps>> => {
       return testMethod(this, "addPayee", params, getContractByCodeHash);
     },
-    addPayeeInternal: async (
-      params: TestContractParams<
-        PaymentSplitTypes.Fields,
-        { account: Address; shares: bigint },
-        PaymentSplitTypes.Maps
-      >
-    ): Promise<TestContractResult<null, PaymentSplitTypes.Maps>> => {
-      return testMethod(
-        this,
-        "addPayeeInternal",
-        params,
-        getContractByCodeHash
-      );
-    },
     release: async (
       params: TestContractParams<
         PaymentSplitTypes.Fields,
@@ -340,8 +315,8 @@ class Factory extends ContractFactory<
 export const PaymentSplit = new Factory(
   Contract.fromJson(
     PaymentSplitContractJson,
-    "",
-    "586fa6da29685ef84f75fad4267beef5a38c94e1fce3d6733835344846173ae2",
+    "=10-2+a7=2-2+27=2-2+56=2-1=1-1=1-2=1-2+2=1+c=2-2+22=2-2+37424c=107-1+f=126+7a7e0214696e73657274206174206d617020706174683a2000=499-1+4=102+1=1-1=52+7a7e021472656d6f7665206174206d617020706174683a2000=186",
+    "51ae8b92a250a613e899a72d5ea7e635a1f4cf2b7e19a2f2a49f6551a74694dc",
     []
   )
 );
@@ -452,17 +427,6 @@ export class PaymentSplitInstance extends ContractInstance {
         getContractByCodeHash
       );
     },
-    addPayeeInternal: async (
-      params: PaymentSplitTypes.CallMethodParams<"addPayeeInternal">
-    ): Promise<PaymentSplitTypes.CallMethodResult<"addPayeeInternal">> => {
-      return callMethod(
-        PaymentSplit,
-        this,
-        "addPayeeInternal",
-        params,
-        getContractByCodeHash
-      );
-    },
     release: async (
       params: PaymentSplitTypes.CallMethodParams<"release">
     ): Promise<PaymentSplitTypes.CallMethodResult<"release">> => {
@@ -552,13 +516,6 @@ export class PaymentSplitInstance extends ContractInstance {
       params: PaymentSplitTypes.SignExecuteMethodParams<"addPayee">
     ): Promise<PaymentSplitTypes.SignExecuteMethodResult<"addPayee">> => {
       return signExecuteMethod(PaymentSplit, this, "addPayee", params);
-    },
-    addPayeeInternal: async (
-      params: PaymentSplitTypes.SignExecuteMethodParams<"addPayeeInternal">
-    ): Promise<
-      PaymentSplitTypes.SignExecuteMethodResult<"addPayeeInternal">
-    > => {
-      return signExecuteMethod(PaymentSplit, this, "addPayeeInternal", params);
     },
     release: async (
       params: PaymentSplitTypes.SignExecuteMethodParams<"release">
