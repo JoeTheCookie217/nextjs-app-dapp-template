@@ -1,0 +1,77 @@
+{
+  "version": "v3.11.1",
+  "name": "TokenLocker",
+  "bytecode": "0501403101010001001bd3f45a8bd356ce03ce022a340c7ba000170016000c330d7bce01ce001600ab0ca10005ce01ce0056160061",
+  "codeHash": "272f6e6d9dddb6fdcd78776febeb871ff8877c12499fd92c66d87287a4284c4b",
+  "fieldsSig": {
+    "names": [
+      "token",
+      "beneficiary",
+      "lockTime",
+      "startTime",
+      "balance"
+    ],
+    "types": [
+      "ByteVec",
+      "Address",
+      "U256",
+      "U256",
+      "U256"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "eventsSig": [
+    {
+      "name": "Release",
+      "fieldNames": [
+        "beneficiary",
+        "token",
+        "releaseTime",
+        "amount"
+      ],
+      "fieldTypes": [
+        "Address",
+        "ByteVec",
+        "U256",
+        "U256"
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "release",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ],
+  "constants": [],
+  "enums": [
+    {
+      "name": "ErrorCodes",
+      "fields": [
+        {
+          "name": "InvalidTime",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        },
+        {
+          "name": "NothingToRelease",
+          "value": {
+            "type": "U256",
+            "value": "1"
+          }
+        }
+      ]
+    }
+  ]
+}

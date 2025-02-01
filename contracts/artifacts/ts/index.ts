@@ -4,4 +4,6 @@
 
 export * from "./PaymentSplit";
 export * from "./TokenFaucet";
+export * from "./TokenLocker";
+export * from "./TokenVesting";
 export * from "./scripts";

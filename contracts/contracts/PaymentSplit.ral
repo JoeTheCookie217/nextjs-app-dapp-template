@@ -35,7 +35,6 @@ Contract PaymentSplit(
 
     @using(preapprovedAssets = true, updateFields = true, checkExternalCaller = false,assetsInContract = true)
     pub fn receive(amount: U256) -> () {
-        assert!(numPayees > 0, ErrorCodes.InvalidSetup)
         assert!(numPayeesRegistered == numPayees, ErrorCodes.InvalidSetup)
         balance = balance + amount
         transferTokenToSelf!(callerAddress!(), ALPH, amount)
@@ -52,7 +51,9 @@ Contract PaymentSplit(
         // payees.push(account)
         let depositor = callerAddress!()
         sharesMap.insert!(depositor, account, shares)
+        emit Debug(`before: ${shares}, ${totalShares}`)
         totalShares = totalShares + shares
+        emit Debug(`after: ${shares}, ${totalShares}`)
         numPayeesRegistered = numPayeesRegistered + 1
         emit PayeeAdded(account, shares)
     }

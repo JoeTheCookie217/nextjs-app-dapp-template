@@ -1,0 +1,31 @@
+Contract TokenLocker(
+    token: ByteVec,
+    beneficiary: Address,
+    lockTime: U256,
+    startTime: U256,
+    mut balance: U256
+) {
+
+    event Release( beneficiary: Address,  token: ByteVec,  releaseTime: U256,  amount: U256)
+    // event TokenLockStart( beneficiary: Address,  token: ByteVec,  startTime: U256,  lockTime: U256)
+
+    enum ErrorCodes {
+        InvalidTime = 0
+        NothingToRelease = 1
+    }
+
+    
+
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
+    pub fn release() -> () {
+        assert!(blockTimeStamp!() >= startTime+lockTime, ErrorCodes.InvalidTime)
+
+        let amount = balance
+        assert!(amount > 0, ErrorCodes.NothingToRelease)
+
+        transferTokenFromSelf!(beneficiary, token, amount)
+
+        balance = 0
+        emit Release(beneficiary, token, blockTimeStamp!(), amount)
+    }
+}

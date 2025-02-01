@@ -1,0 +1,82 @@
+{
+  "version": "v3.11.1",
+  "name": "TokenVesting",
+  "bytecode": "0402406a40b60101010200402cd38f58d92516005600010c0d0d140a5f5f6d61705f5f305f5f160044cb01012b17010c0d0d140a5f5f6d61705f5f305f5f160044cb010116012a0c0e0c140a5f5f6d61705f5f305f5f160044cb010205160016015fa00016012ba100ce0016001601ab01000203014024d3be3e2ad3a0000c0d0d140a5f5f6d61705f5f305f5f160044cb01012a17021601ce01314c030c024a111601ce01ce022a334c031602024a0816021601ce012b2cce022d02",
+  "codeHash": "2d7697e56e2d105923d3cd8067e54beb8a612ffdc9f9f2bea8df23cb8978252c",
+  "fieldsSig": {
+    "names": [
+      "beneficiary",
+      "start",
+      "duration",
+      "balance"
+    ],
+    "types": [
+      "Address",
+      "U256",
+      "U256",
+      "U256"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "eventsSig": [
+    {
+      "name": "ERC20Released",
+      "fieldNames": [
+        "token",
+        "amount"
+      ],
+      "fieldTypes": [
+        "ByteVec",
+        "U256"
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "release",
+      "paramNames": [
+        "token"
+      ],
+      "paramTypes": [
+        "ByteVec"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "vestedAmount",
+      "paramNames": [
+        "token",
+        "timestamp"
+      ],
+      "paramTypes": [
+        "ByteVec",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": [
+        "U256"
+      ]
+    }
+  ],
+  "constants": [],
+  "enums": [],
+  "mapsSig": {
+    "names": [
+      "erc20Released"
+    ],
+    "types": [
+      "Map[ByteVec,U256]"
+    ]
+  }
+}
