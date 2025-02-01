@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export * from "./DutchAuction";
 export * from "./PaymentSplit";
 export * from "./TokenLocker";
 export * from "./TokenVesting";

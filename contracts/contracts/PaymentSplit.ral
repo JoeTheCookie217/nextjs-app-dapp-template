@@ -1,4 +1,3 @@
-// no constructor (check on parameters)
 // unknnown size array
 
 Contract PaymentSplit(

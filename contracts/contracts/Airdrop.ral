@@ -1,0 +1,61 @@
+// Contract Airdrop () {
+//     mapping[Address, U256] failTransferList
+    
+//     enum ErrorCodes {
+//         LengthDontMatch = 0
+//         NeedApproval = 1
+//         WrongAmount = 2
+//     }
+
+//     pub fn multiTransferToken(
+//         token: ByteVec
+//         // address[] calldata addresses,
+//         // uint256[] calldata amounts
+//     ) -> () {
+//         assert!(
+//             addresses.length == amounts.length,
+//             ErrorCodes.LengthDontMatch
+//         )
+//         let token = IERC20(token) 
+//         let amountSum = getSum(amounts)
+//         assert!(
+//             token.allowance(msg.sender, address(this)) > amountSum,
+//             ErrorCodes.NeedApproval
+//         )
+//         for (let mut i = 0; i < addresses.length; i = i + 1) {
+//             token.transferFrom(msg.sender, addresses[i], amounts[i])
+//         }
+//     }
+
+//     pub fn multiTransferETH(
+//         // addresses,
+//         // amounts
+//     ) -> () {
+//         assert!(
+//             addresses.length == amounts.length,
+//             ErrorCodes.LengthDontMatch
+//         )
+//         let amountSum = getSum(amounts)
+//         assert!(msg.value == amountSum, ErrorCodes.WrongAmount)
+//         for (let mut i = 0; i < addresses.length;i = i + 1) {
+//             (bool success, ) = addresses[i].call{value: amounts[i]}("")
+//             if (!success) {
+//                 failTransferList[addresses[i]] = amounts[i]
+//             }
+//         }
+//     }
+
+//     pub fn withdrawFromFailList( to: Address) -> () {
+//         uint failAmount = failTransferList[msg.sender]
+//         assert!(failAmount > 0, "You are not in failed list")
+//         failTransferList[msg.sender] = 0
+//         // (bool success, ) = to.call{value: failAmount}("")
+//         transferTokenFromSelf!(to, alph, failAmount)
+//         assert!(success, "Fail withdraw")
+//     }
+
+//     pub fn getSum(uint256[] calldata _arr) -> (U256) {
+//         for (let mut i = 0; i < _arr.length; i = i+ 1) sum = sum + _arr[i]
+//     }
+// }
+

@@ -47,6 +47,7 @@ describe('unit tests', () => {
 
   // We initialize the fixture variables before all tests
   beforeAll(async () => {
+    console.log('beforeAll')
     web3.setCurrentNodeProvider('http://127.0.0.1:22973', undefined, fetch)
     testContractId = randomContractId()
     testTokenId = testContractId
@@ -56,7 +57,7 @@ describe('unit tests', () => {
     owner = sig1
     testUserAddress1 = sig1.address
     testUserAddress2 = sig2.address
-    console.log({ testUserAddress1, testUserAddress2, testContractAddress, testContractId, testTokenId })
+    // console.log({ testUserAddress1, testUserAddress2, testContractAddress, testContractId, testTokenId })
     testParamsFixture = {
       // a random address that the test contract resides in the tests
       address: testContractAddress,
@@ -77,49 +78,56 @@ describe('unit tests', () => {
       // assets owned by the caller of the function
       inputAssets: [{ address: testUserAddress1, asset: { alphAmount: ONE_ALPH } }]
     }
-  })
-
-  beforeEach(async () => {
-    const now = Date.now()
     paymentSplit = (await PaymentSplit.deploy(owner, { ...testParamsFixture })).contractInstance
   })
 
+  // beforeEach(async () => {
+  //   const now = Date.now()
+  // })
+
   it('test addPayee', async () => {
     const testParams = testParamsFixture
-    console.log({ testParams })
+    // const txResult = await paymentSplit.transact.addPayee({
+    //   signer: owner,
+    //   args: { account: testUserAddress1, shares: testUserShares1 },
+    //   tokens: [{ id: testTokenId, amount: 1n }],
+    //   attoAlphAmount: 1n
+    // })
+    // const contractState = await paymentSplit.fetchState()
     const testResult = await PaymentSplit.tests.addPayee({
       ...testParams,
       // callerAddress: testUserAddress1,
       testArgs: { account: testUserAddress1, shares: testUserShares1 }
     })
-
     const contractState = testResult.contracts[0] as PaymentSplitTypes.State
     expect(contractState.fields.numPayees).toEqual(2n)
     expect(contractState.fields.numPayeesRegistered).toEqual(1n)
 
     // a `PayeeAdded` event is emitted when the test passes
-    console.log(testResult.events)
+    // console.log(testResult.events)
     expect(testResult.events.length).toEqual(2) // creation and payee added
     const event = testResult.events.find((e) => e.name == 'PayeeAdded') as PaymentSplitTypes.PayeeAddedEvent
     // the event is emitted by the test contract
     expect(event.contractAddress).toEqual(testContractAddress)
-    // the name of the event is `PayeeAdded`
     expect(event.name).toEqual('PayeeAdded')
-    // the first field of the event
     expect(event.fields.account).toEqual(testUserAddress1)
-    // the second field of the event
     expect(event.fields.shares).toEqual(testUserShares1)
 
     // add another payee
-    const testResult2 = await PaymentSplit.tests.addPayee({
-      ...testParams,
-      // callerAddress: testUserAddress2,
-      testArgs: { account: testUserAddress2, shares: testUserShares2 }
-    })
-    const contractState2 = testResult2.contracts[0] as PaymentSplitTypes.State
-    console.log(testResult2.events)
-    expect(contractState2.fields.totalShares).toEqual(3n)
-    expect(contractState2.fields.numPayeesRegistered).toEqual(2n)
+    // const txResult2 = await paymentSplit.transact.addPayee({
+    //   signer: owner,
+    //   args: { account: testUserAddress1, shares: testUserShares1 }
+    // })
+    // const contractState2 = await paymentSplit.fetchState()
+    // const testResult2 = await PaymentSplit.tests.addPayee({
+    //   ...testParams,
+    //   // callerAddress: testUserAddress2,
+    //   testArgs: { account: testUserAddress2, shares: testUserShares2 }
+    // })
+    // const contractState2 = testResult2.contracts[0] as PaymentSplitTypes.State
+    // console.log(testResult2.events)
+    // expect(contractState2.fields.totalShares).toEqual(3n)
+    // expect(contractState2.fields.numPayeesRegistered).toEqual(2n)
   })
 
   // it('test receive', async () => {

@@ -1,104 +1,239 @@
-import {
-  Address,
-  addressFromContractId,
-  AssetOutput,
-  ContractState,
-  DUST_AMOUNT,
-  groupOfAddress,
-  TestContractParams,
-  web3
-} from '@alephium/web3'
-import {
-  expectAssertionError,
-  getSigner,
-  randomContractAddress,
-  randomContractId,
-  testAddress
-} from '@alephium/web3-test'
-import { TokenVesting, TokenVestingInstance, TokenVestingTypes } from '../../artifacts/ts'
-import * as base58 from 'bs58'
-import { randomBytes } from 'crypto'
+import { addressFromContractId, subContractId, utils } from '@alephium/web3'
+import { getSigner, getSigners } from '@alephium/web3-test'
+import { Metadata, VestingInstance } from '../artifacts/ts'
 import { PrivateKeyWallet } from '@alephium/web3-wallet'
+import {
+  addVestingSchedule,
+  addVestingScheduleFailed,
+  addVestingScheduleWithPercentage,
+  addVestingScheduleWithPercentageFailed,
+  alph,
+  deployVestingContract,
+  groupIndex,
+  generateSchedule,
+  transferTokenTo,
+  balanceOf
+} from './utils'
+import base58 from 'bs58'
 
-const ONE_ALPH = 10n ** 18n
-
-// copied from alephium-dex example
-export function randomP2PKHAddress(groupIndex = 0): string {
-  const prefix = Buffer.from([0x00])
-  const bytes = Buffer.concat([prefix, randomBytes(32)])
-  const address = base58.encode(bytes)
-  if (groupOfAddress(address) === groupIndex) {
-    return address
-  }
-  return randomP2PKHAddress(groupIndex)
-}
-
-const ONE_HOUR = 1000 * 60 * 60
-
-describe('unit tests', () => {
-  let testContractId: string
-  let testTokenId: string
-  let testContractAddress: string
-  let owner: PrivateKeyWallet
-  let testUserAddress1: string
-  let testUserAddress2: string
-  let testParamsFixture: TestContractParams<TokenVestingTypes.Fields>
-  let tokenVesting: TokenVestingInstance
-
-  // We initialize the fixture variables before all tests
-  beforeAll(async () => {
-    web3.setCurrentNodeProvider('http://127.0.0.1:22973', undefined, fetch)
-    testContractId = randomContractId()
-    testTokenId = testContractId
-    testContractAddress = addressFromContractId(testContractId)
-    const sig1 = await getSigner()
-    const sig2 = await getSigner()
-    owner = sig1
-    testUserAddress1 = sig1.address
-    testUserAddress2 = sig2.address
-    testParamsFixture = {
-      // a random address that the test contract resides in the tests
-      address: testContractAddress,
-      // assets owned by the test contract before a test
-      initialAsset: { alphAmount: ONE_ALPH },
-      // initial state of the test contract
-      initialFields: {
-        beneficiary: testUserAddress2,
-        duration: BigInt(ONE_HOUR),
-        start: BigInt(Date.now()),
-        balance: 0n
-      },
-      // arguments to test the target function of the test contract
-      testArgs: {},
-      // assets owned by the caller of the function
-      inputAssets: [{ address: testUserAddress1, asset: { alphAmount: ONE_ALPH } }]
-    }
-  })
+describe('VestingWallet Tests', () => {
+  let vesting: VestingInstance
+  let manager: PrivateKeyWallet
+  let users: PrivateKeyWallet[]
+  let fakeManager: PrivateKeyWallet
+  const lockedAmount = alph(100n)
+  const duration = 20
 
   beforeEach(async () => {
-    const now = Date.now()
-    tokenVesting = (await TokenVesting.deploy(owner, { ...testParamsFixture })).contractInstance
-  })
+    manager = await getSigner(alph(5000), groupIndex)
+    fakeManager = await getSigner(alph(5000), groupIndex)
+    vesting = (await deployVestingContract(manager.address)).contractInstance
+    users = await getSigners(3, alph(100), groupIndex)
+  }, 10000)
 
-  it('test release', async () => {
-    const testParams = testParamsFixture
-    const testResult = await TokenVesting.tests.release({
-      ...testParams,
-      // callerAddress: testUserAddress1,
-      testArgs: { token: testUserAddress1 }
-    })
+  async function getUserMetadata(user: PrivateKeyWallet) {
+    const path = utils.binToHex(base58.decode(user.address))
+    const metadataContractId = subContractId(vesting.contractId, path, groupIndex)
+    const metadataContract = Metadata.at(addressFromContractId(metadataContractId))
+    const state = await metadataContract.fetchState()
+    return state
+  }
 
-    const contractState = testResult.contracts[0] as TokenVestingTypes.State
-    // expect(contractState.fields.).toEqual(2n)
+  async function checkUserLockedAmount(user: PrivateKeyWallet, lockedAmount: bigint) {
+    const state = await getUserMetadata(user)
+    expect(state.fields.totalAmount).toEqual(lockedAmount)
+    expect(state.fields.address).toEqual(user.address)
+    expect(state.fields.vesting).toEqual(vesting.contractId)
+  }
 
-    // a `ERC20Released` event is emitted when the test passes
+  test('test: admin add schedule without cliff', async () => {
+    const user1 = users[0]
+    const schedule = generateSchedule(duration, false)
+    const tokenIdResult = await vesting.view.getTokenId()
+    await addVestingSchedule(
+      manager,
+      vesting,
+      tokenIdResult.returns,
+      user1.address,
+      schedule.startTime,
+      schedule.cliffTime,
+      schedule.endTime,
+      lockedAmount
+    )
 
-    console.log(testResult.events)
-    expect(testResult.events.length).toEqual(2) // creation and payee added
-    const event = testResult.events.find((e) => e.name == 'ERC20Released') as TokenVestingTypes.ERC20ReleasedEvent
-    // the event is emitted by the test contract
-    expect(event.contractAddress).toEqual(testContractAddress)
-    expect(event.name).toEqual('ERC20Released')
-    expect(event.fields.amount).toEqual(testUserAddress1)
-  })
+    await checkUserLockedAmount(user1, lockedAmount)
+  }, 30000)
+
+  test('test: admin add schedule with cliff', async () => {
+    const user1 = users[0]
+    const schedule = generateSchedule(duration, true)
+    const tokenIdResult = await vesting.view.getTokenId()
+    await addVestingSchedule(
+      manager,
+      vesting,
+      tokenIdResult.returns,
+      user1.address,
+      schedule.startTime,
+      schedule.cliffTime,
+      schedule.endTime,
+      lockedAmount
+    )
+
+    await checkUserLockedAmount(user1, lockedAmount)
+  }, 30000)
+
+  test('test: admin can add schedule for multiple users', async () => {
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i]
+      const schedule = generateSchedule(duration, false)
+      const tokenIdResult = await vesting.view.getTokenId()
+      await addVestingSchedule(
+        manager,
+        vesting,
+        tokenIdResult.returns,
+        user.address,
+        schedule.startTime,
+        schedule.cliffTime,
+        schedule.endTime,
+        lockedAmount
+      )
+      await checkUserLockedAmount(user, lockedAmount)
+    }
+
+    const totalSchedules = await vesting.view.getTotalVestingSchedules()
+
+    expect(totalSchedules.returns).toEqual(3n)
+  }, 30000)
+
+  test('test: admin cannot add schedule for same user twice', async () => {
+    const user1 = users[0]
+    const schedule = generateSchedule(duration, false)
+    const tokenIdResult = await vesting.view.getTokenId()
+    await addVestingSchedule(
+      manager,
+      vesting,
+      tokenIdResult.returns,
+      user1.address,
+      schedule.startTime,
+      schedule.cliffTime,
+      schedule.endTime,
+      lockedAmount
+    )
+
+    await addVestingScheduleFailed(
+      manager,
+      vesting,
+      tokenIdResult.returns,
+      user1.address,
+      schedule.startTime,
+      schedule.cliffTime,
+      schedule.endTime,
+      lockedAmount,
+      5n
+    )
+  }, 30000)
+
+  test('test: not admin cannot add schedule', async () => {
+    const user1 = users[0]
+    const schedule = generateSchedule(duration, false)
+    const tokenIdResult = await vesting.view.getTokenId()
+
+    await transferTokenTo(manager, manager.address, fakeManager.address, tokenIdResult.returns, alph(1000))
+    const balance = await balanceOf(tokenIdResult.returns, fakeManager.address)
+
+    expect(balance).toEqual(alph(1000))
+
+    await addVestingScheduleFailed(
+      fakeManager,
+      vesting,
+      tokenIdResult.returns,
+      user1.address,
+      schedule.startTime,
+      schedule.cliffTime,
+      schedule.endTime,
+      lockedAmount,
+      0n
+    )
+  }, 30000)
+
+  test('test: admin cannot add schedule with invalid cliff time', async () => {
+    const user1 = users[1]
+    const schedule = generateSchedule(duration, false)
+    const tokenIdResult = await vesting.view.getTokenId()
+
+    // testing with cliff time less than start time
+    await addVestingScheduleFailed(
+      manager,
+      vesting,
+      tokenIdResult.returns,
+      user1.address,
+      schedule.startTime,
+      schedule.startTime - BigInt(1000),
+      schedule.endTime,
+      lockedAmount,
+      1n
+    )
+  }, 30000)
+
+  test('test: admin cannot add schedule with invalid end time', async () => {
+    const user1 = users[0]
+    const schedule = generateSchedule(duration, false)
+    const tokenIdResult = await vesting.view.getTokenId()
+
+    // testing with end time less than cliff time
+    await addVestingScheduleFailed(
+      manager,
+      vesting,
+      tokenIdResult.returns,
+      user1.address,
+      schedule.startTime,
+      schedule.cliffTime,
+      schedule.cliffTime - BigInt(1000),
+      lockedAmount,
+      2n
+    )
+  }, 30000)
+
+  test('test: admin add schedule with percentage', async () => {
+    const user1 = users[0]
+    const schedule = generateSchedule(duration, true)
+    const percentage = 30n
+    const tokenIdResult = await vesting.view.getTokenId()
+
+    await addVestingScheduleWithPercentage(
+      manager,
+      vesting,
+      tokenIdResult.returns,
+      user1.address,
+      schedule.startTime,
+      schedule.cliffTime,
+      schedule.endTime,
+      lockedAmount,
+      percentage
+    )
+
+    const actualAmount = (lockedAmount * percentage) / 100n
+
+    await checkUserLockedAmount(user1, actualAmount)
+  }, 30000)
+
+  test('test: admin cannot add schedule with percentage greater than 100%', async () => {
+    const user1 = users[0]
+    const schedule = generateSchedule(duration, true)
+    const percentage = 120n
+    const tokenIdResult = await vesting.view.getTokenId()
+
+    await addVestingScheduleWithPercentageFailed(
+      manager,
+      vesting,
+      tokenIdResult.returns,
+      user1.address,
+      schedule.startTime,
+      schedule.cliffTime,
+      schedule.endTime,
+      lockedAmount,
+      percentage,
+      3n
+    )
+  }, 30000)
 })

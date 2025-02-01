@@ -1,0 +1,205 @@
+{
+  "version": "v3.11.1",
+  "name": "DutchAuction",
+  "bytecode": "070c091440224028408140dd40ee40fc410d411a41364142010000000102a00102010000000203ce01ce0202010000000103d3aed97dd5ce030200000101000001020206004032d3d9783c0da000170216020c30561602341a0c7b000216012a136710320e7b000516012c170316001603340f7b0c170416041601314c09000217051605000316040d2a17044a3316001603334c03b41603a801000001011dd389849cea56a000314c0313c40de0b6b3a7640000024a1556a0002b13800927c0344c0313c4016345785d8a0000024a0c56a0002b138000ea602d170013c40de0b6b3a7640000160013c4013fbe85edc900002c2b02010001010004d3016210a0000b1600a100010000000103d331974e6fa00102010001010004d360ebd55b000b1600a101010000000002d3729e6fc4000b01030103010bd33b62322e00021701ce01170216010d2a1701160202000000000005b4ce00450d7b",
+  "codeHash": "4ea38f63b9c332af5004b4c6dd62d91d048a3ec2f381e5cad52dbb97f57f71ab",
+  "fieldsSig": {
+    "names": [
+      "owner",
+      "auctionStartTime",
+      "collectionId",
+      "baseTokenURI",
+      "nftIndex",
+      "allTokensLen",
+      "__stdInterfaceId"
+    ],
+    "types": [
+      "Address",
+      "U256",
+      "ByteVec",
+      "ByteVec",
+      "U256",
+      "U256",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false
+    ]
+  },
+  "eventsSig": [],
+  "functions": [
+    {
+      "name": "getTokenUri",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "getCollectionIndex",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec",
+        "U256"
+      ]
+    },
+    {
+      "name": "totalSupply",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "addTokenToAllTokensEnumeration",
+      "paramNames": [
+        "tokenId"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "auctionMint",
+      "paramNames": [
+        "value",
+        "quantity"
+      ],
+      "paramTypes": [
+        "U256",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "getAuctionPrice",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "setAuctionStartTime",
+      "paramNames": [
+        "timestamp"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "baseURI",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "setBaseURI",
+      "paramNames": [
+        "baseURI"
+      ],
+      "paramTypes": [
+        "ByteVec"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "withdrawMoney",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    },
+    {
+      "name": "mint",
+      "paramNames": [
+        "mintIndex"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "onlyOwner",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ],
+  "constants": [],
+  "enums": [
+    {
+      "name": "ErrorCodes",
+      "fields": [
+        {
+          "name": "NotStarted",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        },
+        {
+          "name": "NotAuthorized",
+          "value": {
+            "type": "U256",
+            "value": "1"
+          }
+        },
+        {
+          "name": "NotEnoughReserve",
+          "value": {
+            "type": "U256",
+            "value": "2"
+          }
+        },
+        {
+          "name": "InvalidValue",
+          "value": {
+            "type": "U256",
+            "value": "3"
+          }
+        }
+      ]
+    }
+  ],
+  "stdInterfaceId": "0003"
+}

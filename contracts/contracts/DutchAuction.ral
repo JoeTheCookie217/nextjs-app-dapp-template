@@ -1,0 +1,138 @@
+import "std/nft_interface"
+
+const MINUTES = 1000 * 60
+const COLLECTION_SIZE = 10000 
+const AUCTION_START_PRICE = 1 alph
+const AUCTION_END_PRICE = 0.1 alph 
+const AUCTION_TIME = 10  * MINUTES
+const AUCTION_DROP_INTERVAL = 1  * MINUTES
+const AUCTION_DROP_PER_STEP =
+   (AUCTION_START_PRICE - AUCTION_END_PRICE) /
+   (AUCTION_TIME / AUCTION_DROP_INTERVAL)
+
+Contract DutchAuction(
+    owner: Address,
+    mut auctionStartTime: U256,
+    collectionId: ByteVec,
+    mut baseTokenURI: ByteVec,
+    nftIndex: U256,
+    allTokensLen: U256
+) implements INFT {
+    
+    enum ErrorCodes {
+        NotStarted = 0
+        NotAuthorized = 1
+        NotEnoughReserve = 2
+        InvalidValue = 3
+    }
+
+    // U256[] private _allTokens 
+
+    // constructor() Ownable(callerAddress!()) ERC721("WTF Dutch Auction", "WTF Dutch Auction") {
+    //     auctionStartTime = blockTimeStamp!()
+    // }
+
+    pub fn totalSupply() -> (U256) {
+        return allTokensLen
+    }
+
+    fn addTokenToAllTokensEnumeration( tokenId: U256)-> () {
+        emit Debug(`${tokenId}`)
+        // _allTokens.push(tokenId)
+    }
+
+    @using(assetsInContract = true, checkExternalCaller = false)
+    pub fn auctionMint(value: U256, quantity: U256) -> () {
+        let saleStartTime = (auctionStartTime) 
+        assert!(
+        saleStartTime != 0 && blockTimeStamp!() >= saleStartTime,
+        ErrorCodes.NotStarted
+        ) 
+        assert!(
+        totalSupply() + quantity <= COLLECTION_SIZE,
+        ErrorCodes.NotEnoughReserve
+        )
+
+        let totalCost = getAuctionPrice() * quantity 
+        assert!(value >= totalCost, ErrorCodes.InvalidValue) 
+        
+        for(let mut i = 0; i < quantity; i = i+1) {
+            let mintIndex = totalSupply()
+            // mint{caller}(mintIndex)
+            addTokenToAllTokensEnumeration(mintIndex)
+        }
+        if (value > totalCost) {
+            transferTokenFromSelf!(callerAddress!(), ALPH, totalCost)
+        }
+    }
+
+    pub fn getAuctionPrice() -> (U256) {
+        if (blockTimeStamp!() < auctionStartTime) {
+        return AUCTION_START_PRICE
+        }else if (blockTimeStamp!() - auctionStartTime >= AUCTION_TIME) {
+        return AUCTION_END_PRICE
+        } else {
+        let steps = (blockTimeStamp!() - auctionStartTime) /
+            AUCTION_DROP_INTERVAL
+        return AUCTION_START_PRICE - (steps * AUCTION_DROP_PER_STEP)
+        }
+    }
+
+    @using(updateFields = true)
+    pub fn setAuctionStartTime( timestamp: U256) -> () {
+        onlyOwner()
+        auctionStartTime = timestamp
+    }
+
+    pub fn baseURI() -> (ByteVec) {
+        return baseTokenURI
+    }
+
+    @using(updateFields = true)
+    pub fn setBaseURI(baseURI: ByteVec) -> () {
+        onlyOwner()
+        baseTokenURI = baseURI
+    }
+    pub fn withdrawMoney() -> () {
+        onlyOwner()
+        // (bool success, ) = callerAddress!().call{value: address(this).balance}("")
+        // require(success, "Transfer failed.")
+    }
+
+    // IMPLEMENTS
+
+    pub fn getTokenUri() -> ByteVec {
+        return baseTokenURI
+    }
+    
+    pub fn getCollectionIndex() -> (ByteVec, U256) {
+        return collectionId, nftIndex
+    }
+
+    @using(preapprovedAssets = true, checkExternalCaller = false)
+    pub fn mint(mintIndex: U256) -> (ByteVec) {
+        // let minter = callerAddress!()
+        let mut totalSupply = totalSupply()
+
+        // let (initialImmState, initialMutState) = DutchAuction.encodeFields!(selfContractId!(), totalSupply, baseURI())
+        emit Debug(`${mintIndex}`)
+        // let contractId = copyCreateSubContractWithToken!{minter -> ALPH: minimalContractDeposit!()}(
+        //     toByteVec!(totalSupply),
+        //     nftTemplateId,
+        //     initialImmState,
+        //     initialMutState,
+        //     1,
+        //     minter
+        // )
+        let contractId = collectionId
+
+        totalSupply = totalSupply + 1
+        return contractId
+    }
+
+    // MODIFIERS
+
+    fn onlyOwner() -> () {
+        checkCaller!(callerAddress!() == owner, ErrorCodes.NotAuthorized)
+    }
+}

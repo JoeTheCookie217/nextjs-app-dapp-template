@@ -11,9 +11,21 @@
     "skipAbstractContractCheck": false
   },
   "infos": {
+    "DutchAuction": {
+      "sourceFile": "DutchAuction.ral",
+      "sourceCodeHash": "64c8271e5d6e96329d639f6b7587076026c1caf208403c1f9cb78449e409173a",
+      "bytecodeDebugPatch": "=15-1+e=3-5+7=3-1+3=3-1+4=3-1+2=3-1+3=2-2+20=4+414e=76+000216007e02=499-1+d=18+16007e020000=50",
+      "codeHashDebug": "83abe276bfe1db722662986652a2489130438dc39fdcce79b87f88144313e029"
+    },
+    "INFT": {
+      "sourceFile": "../../node_modules/@alephium/web3/std/nft_interface.ral",
+      "sourceCodeHash": "92956f4e61c198f011b48dbda2ed76193ffc79ac9c39f60bf1763a34e02f2c41",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": ""
+    },
     "PaymentSplit": {
       "sourceFile": "PaymentSplit.ral",
-      "sourceCodeHash": "3390d9f8066749f0a32e55d64e770253a42f7da7bc6ebc449bc9d8043c97db86",
+      "sourceCodeHash": "68ff20b1ea5c31e965d9394add742b0356f52359e623be3c036c1eef1ca1d7a8",
       "bytecodeDebugPatch": "=10-6+c6=2-2=1-1=1-1=2-2+75=2-1=1+0=1-3+22b=2+4=2+256426b=94-2+35=126+7a7e0214696e73657274206174206d617020706174683a2000=12+1601a0037e03086265666f72653a20022c2000=14+1601a0037e030761667465723a20022c2000=473-1+4=102+1=1-1=52+7a7e021472656d6f7665206174206d617020706174683a2000=186",
       "codeHashDebug": "c059aa4d1e233716dca31cc85ad0ff7cfcc474494beefac1c37a6b980fc74b09"
     },
