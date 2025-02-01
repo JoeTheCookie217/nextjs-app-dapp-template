@@ -1,4 +1,5 @@
 import "std/fungible_token_interface"
+// import "std/nft_interface"
 
 // Defines a contract named `TokenFaucet`.
 // A contract is a collection of fields (its state) and functions.
