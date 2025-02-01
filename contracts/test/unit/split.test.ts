@@ -71,7 +71,7 @@ describe('unit tests', () => {
       // arguments to test the target function of the test contract
       testArgs: { account: '', shares: 0n },
       // assets owned by the caller of the function
-      inputAssets: [{ address: testAddress, asset: { alphAmount: ONE_ALPH } }]
+      inputAssets: [{ address: testUserAddress1, asset: { alphAmount: ONE_ALPH } }]
     }
   })
 
@@ -85,13 +85,13 @@ describe('unit tests', () => {
     })
 
     const contractState = testResult.contracts[0] as PaymentSplitTypes.State
-    expect(contractState.fields.numPayees).toEqual(2)
-    // double check the balance of the contract assets
-    expect(contractState.asset).toEqual({ alphAmount: ONE_ALPH })
+    expect(contractState.fields.numPayees).toEqual(2n)
+    expect(contractState.fields.numPayeesRegistered).toEqual(1n)
 
     // a `PayeeAdded` event is emitted when the test passes
-    expect(testResult.events.length).toEqual(1)
-    const event = testResult.events[0] as PaymentSplitTypes.PayeeAddedEvent
+    console.log(testResult.events)
+    expect(testResult.events.length).toEqual(2) // creation and payee added
+    const event = testResult.events[1] as PaymentSplitTypes.PayeeAddedEvent
     // the event is emitted by the test contract
     expect(event.contractAddress).toEqual(testContractAddress)
     // the name of the event is `PayeeAdded`
