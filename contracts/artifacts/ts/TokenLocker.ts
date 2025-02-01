@@ -56,7 +56,15 @@ export namespace TokenLockerTypes {
   }>;
 
   export interface CallMethodTable {
+    deposit: {
+      params: CallContractParams<{ amount: bigint }>;
+      result: CallContractResult<null>;
+    };
     release: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<null>;
+    };
+    validateParams: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<null>;
     };
@@ -78,7 +86,15 @@ export namespace TokenLockerTypes {
   };
 
   export interface SignExecuteMethodTable {
+    deposit: {
+      params: SignExecuteContractMethodParams<{ amount: bigint }>;
+      result: SignExecuteScriptTxResult;
+    };
     release: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    validateParams: {
       params: Omit<SignExecuteContractMethodParams<{}>, "args">;
       result: SignExecuteScriptTxResult;
     };
@@ -111,6 +127,14 @@ class Factory extends ContractFactory<
   }
 
   tests = {
+    deposit: async (
+      params: TestContractParamsWithoutMaps<
+        TokenLockerTypes.Fields,
+        { amount: bigint }
+      >
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "deposit", params, getContractByCodeHash);
+    },
     release: async (
       params: Omit<
         TestContractParamsWithoutMaps<TokenLockerTypes.Fields, never>,
@@ -118,6 +142,14 @@ class Factory extends ContractFactory<
       >
     ): Promise<TestContractResultWithoutMaps<null>> => {
       return testMethod(this, "release", params, getContractByCodeHash);
+    },
+    validateParams: async (
+      params: Omit<
+        TestContractParamsWithoutMaps<TokenLockerTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "validateParams", params, getContractByCodeHash);
     },
   };
 
@@ -134,8 +166,8 @@ class Factory extends ContractFactory<
 export const TokenLocker = new Factory(
   Contract.fromJson(
     TokenLockerContractJson,
-    "",
-    "272f6e6d9dddb6fdcd78776febeb871ff8877c12499fd92c66d87287a4284c4b",
+    "=12-1+6=162+7ce027e020a6c6f636b=1+4696d653a2000=12",
+    "89ac8478810e78a8c6c18a77a12097549d7fb4ff2f02790bdd2ab464d175fbaa",
     []
   )
 );
@@ -169,6 +201,17 @@ export class TokenLockerInstance extends ContractInstance {
   }
 
   view = {
+    deposit: async (
+      params: TokenLockerTypes.CallMethodParams<"deposit">
+    ): Promise<TokenLockerTypes.CallMethodResult<"deposit">> => {
+      return callMethod(
+        TokenLocker,
+        this,
+        "deposit",
+        params,
+        getContractByCodeHash
+      );
+    },
     release: async (
       params?: TokenLockerTypes.CallMethodParams<"release">
     ): Promise<TokenLockerTypes.CallMethodResult<"release">> => {
@@ -180,13 +223,34 @@ export class TokenLockerInstance extends ContractInstance {
         getContractByCodeHash
       );
     },
+    validateParams: async (
+      params?: TokenLockerTypes.CallMethodParams<"validateParams">
+    ): Promise<TokenLockerTypes.CallMethodResult<"validateParams">> => {
+      return callMethod(
+        TokenLocker,
+        this,
+        "validateParams",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
   };
 
   transact = {
+    deposit: async (
+      params: TokenLockerTypes.SignExecuteMethodParams<"deposit">
+    ): Promise<TokenLockerTypes.SignExecuteMethodResult<"deposit">> => {
+      return signExecuteMethod(TokenLocker, this, "deposit", params);
+    },
     release: async (
       params: TokenLockerTypes.SignExecuteMethodParams<"release">
     ): Promise<TokenLockerTypes.SignExecuteMethodResult<"release">> => {
       return signExecuteMethod(TokenLocker, this, "release", params);
+    },
+    validateParams: async (
+      params: TokenLockerTypes.SignExecuteMethodParams<"validateParams">
+    ): Promise<TokenLockerTypes.SignExecuteMethodResult<"validateParams">> => {
+      return signExecuteMethod(TokenLocker, this, "validateParams", params);
     },
   };
 }

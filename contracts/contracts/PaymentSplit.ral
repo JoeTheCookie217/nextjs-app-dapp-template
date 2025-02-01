@@ -91,6 +91,10 @@ Contract PaymentSplit(
         return (totalReceived * sharesMap[account]) / totalShares - alreadyReleased
     }
 
+    // pub fn getPayees() -> () {
+    //     let payees = []
+    // }
+
     // ADMIN FUNCTIONS
 
     @using(updateFields = true)

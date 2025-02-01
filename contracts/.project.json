@@ -11,41 +11,23 @@
     "skipAbstractContractCheck": false
   },
   "infos": {
-    "IFungibleToken": {
-      "sourceFile": "../../node_modules/@alephium/web3/std/fungible_token_interface.ral",
-      "sourceCodeHash": "62910bf11e1eeb6cb2fd468626ff606a9b06306b2b81590c3b10f6deb5966bde",
-      "bytecodeDebugPatch": "",
-      "codeHashDebug": ""
-    },
     "PaymentSplit": {
       "sourceFile": "PaymentSplit.ral",
-      "sourceCodeHash": "321fa432f7af5996b1b15654dd04a760b4b6f3fee825fda7daeab893a071e200",
+      "sourceCodeHash": "3390d9f8066749f0a32e55d64e770253a42f7da7bc6ebc449bc9d8043c97db86",
       "bytecodeDebugPatch": "=10-6+c6=2-2=1-1=1-1=2-2+75=2-1=1+0=1-3+22b=2+4=2+256426b=94-2+35=126+7a7e0214696e73657274206174206d617020706174683a2000=12+1601a0037e03086265666f72653a20022c2000=14+1601a0037e030761667465723a20022c2000=473-1+4=102+1=1-1=52+7a7e021472656d6f7665206174206d617020706174683a2000=186",
       "codeHashDebug": "c059aa4d1e233716dca31cc85ad0ff7cfcc474494beefac1c37a6b980fc74b09"
     },
-    "TokenFaucet": {
-      "sourceFile": "token.ral",
-      "sourceCodeHash": "1c48d6907368999a4a9e11a78ad2478420f4aef1b0fcc89acae44e4031c09e36",
-      "bytecodeDebugPatch": "=20-2+71=111-1+4=10+a0007e02175468652063757272656e742062616c616e63652069732000=46",
-      "codeHashDebug": "06b49f3673daa80e1a2452f6478c177652dd9b9a5730be557aa9dd6dda347152"
-    },
     "TokenLocker": {
       "sourceFile": "TokenLocker.ral",
-      "sourceCodeHash": "16a35cf38f558c0470d122a140a157f5d1d2447a117c83bd661794798d1dcce5",
-      "bytecodeDebugPatch": "",
-      "codeHashDebug": "272f6e6d9dddb6fdcd78776febeb871ff8877c12499fd92c66d87287a4284c4b"
+      "sourceCodeHash": "03206cca1fb5ccaf7db9c5f08a6379a96e9aab1db532ef3291430c12d125ea1c",
+      "bytecodeDebugPatch": "=12-1+6=162+7ce027e020a6c6f636b=1+4696d653a2000=12",
+      "codeHashDebug": "89ac8478810e78a8c6c18a77a12097549d7fb4ff2f02790bdd2ab464d175fbaa"
     },
     "TokenVesting": {
       "sourceFile": "TokenVesting.ral",
       "sourceCodeHash": "a022ae76cc673b30876ec2c044036fd141fb4f9d3fbbe5127178aa9f83ac1a3d",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "2d7697e56e2d105923d3cd8067e54beb8a612ffdc9f9f2bea8df23cb8978252c"
-    },
-    "Withdraw": {
-      "sourceFile": "withdraw.ral",
-      "sourceCodeHash": "52423580f02f5aab7050bfb9a14b497ea4bdcb10b3444483650f3dad8e0e5330",
-      "bytecodeDebugPatch": "",
-      "codeHashDebug": ""
     }
   }
 }

@@ -6,6 +6,7 @@ Contract TokenLocker(
     mut balance: U256
 ) {
 
+    // event Deposit
     event Release( beneficiary: Address,  token: ByteVec,  releaseTime: U256,  amount: U256)
     // event TokenLockStart( beneficiary: Address,  token: ByteVec,  startTime: U256,  lockTime: U256)
 
@@ -14,10 +15,16 @@ Contract TokenLocker(
         NothingToRelease = 1
     }
 
-    
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
+    pub fn deposit(amount: U256) -> () {
+        transferTokenToSelf!(callerAddress!(), token, amount)
+        balance = balance + amount
+    }
 
     @using(preapprovedAssets = true, assetsInContract = true, updateFields = true, checkExternalCaller = false)
     pub fn release() -> () {
+        validateParams()
+
         assert!(blockTimeStamp!() >= startTime+lockTime, ErrorCodes.InvalidTime)
 
         let amount = balance
@@ -27,5 +34,12 @@ Contract TokenLocker(
 
         balance = 0
         emit Release(beneficiary, token, blockTimeStamp!(), amount)
+    }
+
+    // MODIFIERS
+
+    fn validateParams() -> () {
+        emit Debug(`lockTime: ${lockTime}`)
+        assert!(lockTime > 0, ErrorCodes.InvalidTime)
     }
 }

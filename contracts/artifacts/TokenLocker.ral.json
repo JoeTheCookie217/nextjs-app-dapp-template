@@ -1,8 +1,8 @@
 {
   "version": "v3.11.1",
   "name": "TokenLocker",
-  "bytecode": "0501403101010001001bd3f45a8bd356ce03ce022a340c7ba000170016000c330d7bce01ce001600ab0ca10005ce01ce0056160061",
-  "codeHash": "272f6e6d9dddb6fdcd78776febeb871ff8877c12499fd92c66d87287a4284c4b",
+  "bytecode": "050318404b4057010101010009d3d385e15cb4ce001600aca00016002aa10001010001001cd3f45a8bd3000256ce03ce022a340c7ba000170016000c330d7bce01ce001600ab0ca10005ce01ce0056160061000000000005ce020c330c7b",
+  "codeHash": "b437405317bbd86e8c84030b2780cd82e034da8a164ea09f76bd0054558dbced",
   "fieldsSig": {
     "names": [
       "token",
@@ -45,7 +45,27 @@
   ],
   "functions": [
     {
+      "name": "deposit",
+      "paramNames": [
+        "amount"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
       "name": "release",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    },
+    {
+      "name": "validateParams",
       "paramNames": [],
       "paramTypes": [],
       "paramIsMutable": [],
