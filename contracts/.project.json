@@ -19,9 +19,9 @@
     },
     "PaymentSplit": {
       "sourceFile": "PaymentSplit.ral",
-      "sourceCodeHash": "17e9195d9a3f0b1991d48e36bec705f517b2d13c4c054457af68d911c711b827",
+      "sourceCodeHash": "064fcf32d9c0ff9663011c8e78381ec99f44b14ff0e7a5f7542fe061759ba8b6",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "f7b4ee018bc3ee1a42de4407d8487e9b1b8972e20b59dccc08f002ab4db445de"
+      "codeHashDebug": "725e95f1dc430824a26a1f01370013c890d799bf53a79791c11237187c5e9ffe"
     },
     "TokenFaucet": {
       "sourceFile": "token.ral",

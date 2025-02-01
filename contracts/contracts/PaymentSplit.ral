@@ -1,5 +1,9 @@
+// no constructor (check on parameters)
+// unknnown size array
+
 Contract PaymentSplit(
-    // numPayees: U256,
+    numPayees: U256,
+    mut numPayeesRegistered: U256,
     mut totalShares: U256,
     mut totalReleased: U256,
     mut balance: U256
@@ -18,23 +22,17 @@ Contract PaymentSplit(
         AccountHasShares = 2
         AccountHasNoShares = 3
         AccountIsNotDuePayment = 4
+        InvalidSetup = 5
     }
 
-    // let mut totalShares: U256 
-    // let mut totalReleased: U256 
     // address[] public payees
 
-    // constructor(address[] memory _payees, U256[] memory _shares) payable {
-    //     assert!(_payees.length == _shares.length, "PaymentSplitter: payees and shares length mismatch")
-    //     assert!(_payees.length > 0, "PaymentSplitter: no payees")
-    //     for (U256 i = 0 i < _payees.length i++) {
-    //         _addPayee(_payees[i], _shares[i])
-    //     }
-    // }
-
-    @using(updateFields = true, checkExternalCaller = false)
-    pub fn receive() -> () {
-        balance = dustAmount!()
+    @using(preapprovedAssets = true, updateFields = true, checkExternalCaller = false,assetsInContract = true)
+    pub fn receive(amount: U256) -> () {
+        assert!(numPayees > 0, ErrorCodes.InvalidSetup)
+        assert!(numPayeesRegistered == numPayees, ErrorCodes.InvalidSetup)
+        balance = balance + amount
+        transferTokenToSelf!(callerAddress!(), ALPH, amount)
         emit PaymentReceived(callerAddress!(), dustAmount!())
     }
 
@@ -52,18 +50,19 @@ Contract PaymentSplit(
         // payees.push(account)
         sharesMap[account] = shares
         totalShares = totalShares + shares
+        numPayeesRegistered = numPayeesRegistered + 1
         emit PayeeAdded(account, shares)
     }
 
-    //
-
-    @using(updateFields = true, checkExternalCaller = false)
-    pub fn release( account: Address) -> () {
+    @using(updateFields = true, checkExternalCaller = false, assetsInContract = true)
+    pub fn release(account: Address) -> () {
         assert!(sharesMap[account] > 0, ErrorCodes.AccountHasNoShares)
         let payment = releasable(account)
         assert!(payment != 0, ErrorCodes.AccountIsNotDuePayment)
         totalReleased = totalReleased + payment
         releasedMap[account] = releasedMap[account] + payment
+        transferTokenFromSelf!(account, ALPH, payment)
+        balance = balance - payment
         // account.transfer(payment)
         emit PaymentReleased(account, payment)
     }
@@ -83,15 +82,4 @@ Contract PaymentSplit(
     ) -> (U256) {
         return (totalReceived * sharesMap[account]) / totalShares - alreadyReleased
     }
-
-    // @using(updateFields = true)
-    //  fn addPayeeInt(account: Address,  accountShares:  U256) -> () {
-    //     // assert!(account != Address(0), ErrorCodes.InvalidPayee)
-    //     assert!(accountShares > 0, ErrorCodes.InvalidShares)
-    //     assert!(sharesMap[account] == 0,ErrorCodes.AccountHasShares)
-    //     // payees.push(account)
-    //     sharesMap[account] = accountShares
-    //     totalShares = totalShares + accountShares
-    //     emit PayeeAdded(account, accountShares)
-    // }
 }

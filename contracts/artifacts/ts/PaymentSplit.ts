@@ -41,6 +41,8 @@ import { RalphMap } from "@alephium/web3";
 // Custom types for the contract
 export namespace PaymentSplitTypes {
   export type Fields = {
+    numPayees: bigint;
+    numPayeesRegistered: bigint;
     totalShares: bigint;
     totalReleased: bigint;
     balance: bigint;
@@ -63,7 +65,7 @@ export namespace PaymentSplitTypes {
 
   export interface CallMethodTable {
     receive: {
-      params: Omit<CallContractParams<{}>, "args">;
+      params: CallContractParams<{ amount: bigint }>;
       result: CallContractResult<null>;
     };
     addPayee: {
@@ -109,7 +111,7 @@ export namespace PaymentSplitTypes {
 
   export interface SignExecuteMethodTable {
     receive: {
-      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      params: SignExecuteContractMethodParams<{ amount: bigint }>;
       result: SignExecuteScriptTxResult;
     };
     addPayee: {
@@ -173,6 +175,7 @@ class Factory extends ContractFactory<
       AccountHasShares: BigInt("2"),
       AccountHasNoShares: BigInt("3"),
       AccountIsNotDuePayment: BigInt("4"),
+      InvalidSetup: BigInt("5"),
     },
   };
 
@@ -182,13 +185,10 @@ class Factory extends ContractFactory<
 
   tests = {
     receive: async (
-      params: Omit<
-        TestContractParams<
-          PaymentSplitTypes.Fields,
-          never,
-          PaymentSplitTypes.Maps
-        >,
-        "testArgs"
+      params: TestContractParams<
+        PaymentSplitTypes.Fields,
+        { amount: bigint },
+        PaymentSplitTypes.Maps
       >
     ): Promise<TestContractResult<null, PaymentSplitTypes.Maps>> => {
       return testMethod(this, "receive", params, getContractByCodeHash);
@@ -260,7 +260,7 @@ export const PaymentSplit = new Factory(
   Contract.fromJson(
     PaymentSplitContractJson,
     "",
-    "f7b4ee018bc3ee1a42de4407d8487e9b1b8972e20b59dccc08f002ab4db445de",
+    "725e95f1dc430824a26a1f01370013c890d799bf53a79791c11237187c5e9ffe",
     []
   )
 );
@@ -350,13 +350,13 @@ export class PaymentSplitInstance extends ContractInstance {
 
   view = {
     receive: async (
-      params?: PaymentSplitTypes.CallMethodParams<"receive">
+      params: PaymentSplitTypes.CallMethodParams<"receive">
     ): Promise<PaymentSplitTypes.CallMethodResult<"receive">> => {
       return callMethod(
         PaymentSplit,
         this,
         "receive",
-        params === undefined ? {} : params,
+        params,
         getContractByCodeHash
       );
     },
