@@ -4,6 +4,7 @@ import {
   AssetOutput,
   ContractState,
   DUST_AMOUNT,
+  groupOfAddress,
   TestContractParams,
   web3
 } from '@alephium/web3'
@@ -15,8 +16,21 @@ import {
   testAddress
 } from '@alephium/web3-test'
 import { PaymentSplit, PaymentSplitTypes } from '../../artifacts/ts'
+import * as base58 from 'bs58'
+import { randomBytes } from 'crypto'
 
 const ONE_ALPH = 10n ** 18n
+
+// copied from alephium-dex example
+export function randomP2PKHAddress(groupIndex = 0): string {
+  const prefix = Buffer.from([0x00])
+  const bytes = Buffer.concat([prefix, randomBytes(32)])
+  const address = base58.encode(bytes)
+  if (groupOfAddress(address) === groupIndex) {
+    return address
+  }
+  return randomP2PKHAddress(groupIndex)
+}
 
 describe('unit tests', () => {
   let testContractId: string
@@ -38,6 +52,7 @@ describe('unit tests', () => {
     const sig2 = await getSigner()
     testUserAddress1 = sig1.address
     testUserAddress2 = sig2.address
+    console.log({ testUserAddress1, testUserAddress2, testContractAddress, testContractId, testTokenId })
     testParamsFixture = {
       // a random address that the test contract resides in the tests
       address: testContractAddress,
@@ -62,7 +77,7 @@ describe('unit tests', () => {
 
   it('test addPayee', async () => {
     const testParams = testParamsFixture
-
+    console.log({ testParams })
     const testResult = await PaymentSplit.tests.addPayee({
       ...testParams,
       // callerAddress: testUserAddress1,
@@ -193,6 +208,8 @@ describe('unit tests', () => {
       { contractAddress: testContractAddress, message: 'The current balance is 10' }
     ])
   })
+
+  // test()
 
   it('test assert', async () => {
     // test that assertion failed in the withdraw function

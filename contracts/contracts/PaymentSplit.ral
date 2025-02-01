@@ -47,14 +47,15 @@ Contract PaymentSplit(
         addPayeeInternal(account, shares)
     }
 
-    @using(updateFields = true)
+    @using(updateFields = true, preapprovedAssets = true)
     fn addPayeeInternal(account: Address, shares: U256) -> () {
         // assert!(account != new Address(""), ErrorCodes.InvalidPayee)
         assert!(shares > 0, ErrorCodes.InvalidShares)
-        assert!(sharesMap[account] == 0, ErrorCodes.AccountHasShares)
+        assert!(sharesMap.contains!(account) == false, ErrorCodes.AccountHasShares)
 
         // payees.push(account)
-        sharesMap[account] = shares
+        let depositor = callerAddress!()
+        sharesMap.insert!(depositor, account, shares)
         totalShares = totalShares + shares
         numPayeesRegistered = numPayeesRegistered + 1
         emit PayeeAdded(account, shares)
@@ -70,23 +71,21 @@ Contract PaymentSplit(
         releasedMap[account] = releasedMap[account] + payment
         transferTokenFromSelf!(account, ALPH, payment)
         balance = balance - payment
-        // account.transfer(payment)
         emit PaymentReleased(account, payment)
     }
 
     // VIEW FUNCTIONS
 
     @using(checkExternalCaller = false)
-    pub fn releasable(account: Address)  -> (U256) {
-        // let totalReceived = address(this).balance + totalReleased
-        let totalReceived = dustAmount!()
+    pub fn releasable(account: Address) -> (U256) {
+        let totalReceived = balance + totalReleased
         return pendingPayment(account, totalReceived, releasedMap[account])
     }
 
     pub fn pendingPayment(
         account: Address,
-         totalReceived:  U256,
-         alreadyReleased:  U256
+        totalReceived: U256,
+        alreadyReleased: U256
     ) -> (U256) {
         return (totalReceived * sharesMap[account]) / totalShares - alreadyReleased
     }
@@ -99,7 +98,11 @@ Contract PaymentSplit(
 
         let currentShares = sharesMap[account]
         totalShares = totalShares - currentShares + shares
-        sharesMap[account] = shares
+        if (shares == 0) {
+            numPayeesRegistered = numPayeesRegistered - 1
+            sharesMap.remove!(owner, account)
+        }
+        else {sharesMap[account] = shares}
     }
 
     @using(updateFields = true)
@@ -118,5 +121,11 @@ Contract PaymentSplit(
     pub fn unpause() -> () {
         checkCaller!(callerAddress!() == owner, ErrorCodes.NotAuthorized)
         paused = false
+    }
+
+    // HELPERS (Solidity modifiers like)
+
+    fn checkParams() -> () {
+        assert!(numPayees > 0, ErrorCodes.InvalidSetup)
     }
 }
