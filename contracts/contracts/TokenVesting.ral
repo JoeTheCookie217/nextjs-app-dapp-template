@@ -1,0 +1,31 @@
+Contract TokenVesting(
+    beneficiary: Address,
+    start: U256,
+    duration: U256,
+    mut balance: U256
+) {
+    mapping[ByteVec, U256] erc20Released 
+
+    event ERC20Released(token:Address, amount:U256)
+
+    @using(preapprovedAssets = true, updateFields = true)
+    pub fn release(token: ByteVec) -> ()  {
+        let releasable = vestedAmount(token, blockTimeStamp!()) - erc20Released[token]
+        erc20Released[token] = erc20Released[token] + releasable 
+        emit ERC20Released(token, releasable)
+        balance = balance - releasable
+         transferTokenFromSelf!(beneficiary, token, releasable)
+    }
+
+    // @using(preapprovedAssets = true)
+    pub fn vestedAmount( token: ByteVec,  timestamp: U256) -> (U256) {
+        let totalAllocation = balance + erc20Released[token]
+        if (timestamp < start) {
+            return 0
+        } else if (timestamp > start + duration) {
+            return totalAllocation
+        } else {
+            return (totalAllocation * (timestamp - start)) / duration
+        }
+    }
+}
