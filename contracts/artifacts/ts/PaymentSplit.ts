@@ -42,6 +42,8 @@ import { RalphMap } from "@alephium/web3";
 export namespace PaymentSplitTypes {
   export type Fields = {
     numPayees: bigint;
+    owner: Address;
+    paused: boolean;
     numPayeesRegistered: bigint;
     totalShares: bigint;
     totalReleased: bigint;
@@ -91,6 +93,22 @@ export namespace PaymentSplitTypes {
         alreadyReleased: bigint;
       }>;
       result: CallContractResult<bigint>;
+    };
+    updateShares: {
+      params: CallContractParams<{ account: Address; shares: bigint }>;
+      result: CallContractResult<null>;
+    };
+    updateOwner: {
+      params: CallContractParams<{ newOwner: Address }>;
+      result: CallContractResult<null>;
+    };
+    pause: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<null>;
+    };
+    unpause: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<null>;
     };
   }
   export type CallMethodParams<T extends keyof CallMethodTable> =
@@ -144,6 +162,25 @@ export namespace PaymentSplitTypes {
       }>;
       result: SignExecuteScriptTxResult;
     };
+    updateShares: {
+      params: SignExecuteContractMethodParams<{
+        account: Address;
+        shares: bigint;
+      }>;
+      result: SignExecuteScriptTxResult;
+    };
+    updateOwner: {
+      params: SignExecuteContractMethodParams<{ newOwner: Address }>;
+      result: SignExecuteScriptTxResult;
+    };
+    pause: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    unpause: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
   }
   export type SignExecuteMethodParams<T extends keyof SignExecuteMethodTable> =
     SignExecuteMethodTable[T]["params"];
@@ -176,6 +213,8 @@ class Factory extends ContractFactory<
       AccountHasNoShares: BigInt("3"),
       AccountIsNotDuePayment: BigInt("4"),
       InvalidSetup: BigInt("5"),
+      NotAuthorized: BigInt("6"),
+      Paused: BigInt("7"),
     },
   };
 
@@ -243,6 +282,48 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<bigint, PaymentSplitTypes.Maps>> => {
       return testMethod(this, "pendingPayment", params, getContractByCodeHash);
     },
+    updateShares: async (
+      params: TestContractParams<
+        PaymentSplitTypes.Fields,
+        { account: Address; shares: bigint },
+        PaymentSplitTypes.Maps
+      >
+    ): Promise<TestContractResult<null, PaymentSplitTypes.Maps>> => {
+      return testMethod(this, "updateShares", params, getContractByCodeHash);
+    },
+    updateOwner: async (
+      params: TestContractParams<
+        PaymentSplitTypes.Fields,
+        { newOwner: Address },
+        PaymentSplitTypes.Maps
+      >
+    ): Promise<TestContractResult<null, PaymentSplitTypes.Maps>> => {
+      return testMethod(this, "updateOwner", params, getContractByCodeHash);
+    },
+    pause: async (
+      params: Omit<
+        TestContractParams<
+          PaymentSplitTypes.Fields,
+          never,
+          PaymentSplitTypes.Maps
+        >,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<null, PaymentSplitTypes.Maps>> => {
+      return testMethod(this, "pause", params, getContractByCodeHash);
+    },
+    unpause: async (
+      params: Omit<
+        TestContractParams<
+          PaymentSplitTypes.Fields,
+          never,
+          PaymentSplitTypes.Maps
+        >,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<null, PaymentSplitTypes.Maps>> => {
+      return testMethod(this, "unpause", params, getContractByCodeHash);
+    },
   };
 
   stateForTest(
@@ -260,7 +341,7 @@ export const PaymentSplit = new Factory(
   Contract.fromJson(
     PaymentSplitContractJson,
     "",
-    "725e95f1dc430824a26a1f01370013c890d799bf53a79791c11237187c5e9ffe",
+    "586fa6da29685ef84f75fad4267beef5a38c94e1fce3d6733835344846173ae2",
     []
   )
 );
@@ -415,6 +496,50 @@ export class PaymentSplitInstance extends ContractInstance {
         getContractByCodeHash
       );
     },
+    updateShares: async (
+      params: PaymentSplitTypes.CallMethodParams<"updateShares">
+    ): Promise<PaymentSplitTypes.CallMethodResult<"updateShares">> => {
+      return callMethod(
+        PaymentSplit,
+        this,
+        "updateShares",
+        params,
+        getContractByCodeHash
+      );
+    },
+    updateOwner: async (
+      params: PaymentSplitTypes.CallMethodParams<"updateOwner">
+    ): Promise<PaymentSplitTypes.CallMethodResult<"updateOwner">> => {
+      return callMethod(
+        PaymentSplit,
+        this,
+        "updateOwner",
+        params,
+        getContractByCodeHash
+      );
+    },
+    pause: async (
+      params?: PaymentSplitTypes.CallMethodParams<"pause">
+    ): Promise<PaymentSplitTypes.CallMethodResult<"pause">> => {
+      return callMethod(
+        PaymentSplit,
+        this,
+        "pause",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    unpause: async (
+      params?: PaymentSplitTypes.CallMethodParams<"unpause">
+    ): Promise<PaymentSplitTypes.CallMethodResult<"unpause">> => {
+      return callMethod(
+        PaymentSplit,
+        this,
+        "unpause",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
   };
 
   transact = {
@@ -449,6 +574,26 @@ export class PaymentSplitInstance extends ContractInstance {
       params: PaymentSplitTypes.SignExecuteMethodParams<"pendingPayment">
     ): Promise<PaymentSplitTypes.SignExecuteMethodResult<"pendingPayment">> => {
       return signExecuteMethod(PaymentSplit, this, "pendingPayment", params);
+    },
+    updateShares: async (
+      params: PaymentSplitTypes.SignExecuteMethodParams<"updateShares">
+    ): Promise<PaymentSplitTypes.SignExecuteMethodResult<"updateShares">> => {
+      return signExecuteMethod(PaymentSplit, this, "updateShares", params);
+    },
+    updateOwner: async (
+      params: PaymentSplitTypes.SignExecuteMethodParams<"updateOwner">
+    ): Promise<PaymentSplitTypes.SignExecuteMethodResult<"updateOwner">> => {
+      return signExecuteMethod(PaymentSplit, this, "updateOwner", params);
+    },
+    pause: async (
+      params: PaymentSplitTypes.SignExecuteMethodParams<"pause">
+    ): Promise<PaymentSplitTypes.SignExecuteMethodResult<"pause">> => {
+      return signExecuteMethod(PaymentSplit, this, "pause", params);
+    },
+    unpause: async (
+      params: PaymentSplitTypes.SignExecuteMethodParams<"unpause">
+    ): Promise<PaymentSplitTypes.SignExecuteMethodResult<"unpause">> => {
+      return signExecuteMethod(PaymentSplit, this, "unpause", params);
     },
   };
 

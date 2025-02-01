@@ -46,6 +46,8 @@ describe('unit tests', () => {
       // initial state of the test contract
       initialFields: {
         numPayees: 2n,
+        owner: testUserAddress1,
+        paused: false,
         numPayeesRegistered: 0n,
         totalReleased: 0n,
         totalShares: 0n,

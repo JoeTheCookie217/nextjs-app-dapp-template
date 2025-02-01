@@ -1,11 +1,13 @@
 {
   "version": "v3.11.1",
   "name": "PaymentSplit",
-  "bytecode": "0506402f40404092410c413f416a010101010016d3d2842a67ce000c33117ba000ce002f117ba00316002aa103b41600a907b413c3038d7ea4c680005f010002020004d3752f75f31600160100020000020200402816010c330d7b0c0d0d140a5f5f6d61705f5f305f5f16004744cb01010c2f0e7b16010c0e0c140a5f5f6d61705f5f305f5f16004744cb0102a00116012aa101a0000d2aa10005160016015f01020102004039d34a509e390c0d0d140a5f5f6d61705f5f305f5f16004744cb01010c330f7b16000004170116010c30107ba00216012aa1020c0d0d140a5f5f6d61705f5f315f5f16004744cb010116012a0c0e0c140a5f5f6d61705f5f315f5f16004744cb010216001601a8a00316012ba10306160016015f010001020110d33344e43a13c3038d7ea4c680001701160016010c0d0d140a5f5f6d61705f5f315f5f16004744cb0101000502010003030111d329f7bbc916010c0d0d140a5f5f6d61705f5f305f5f16004744cb01012ca0012d16022b02",
-  "codeHash": "725e95f1dc430824a26a1f01370013c890d799bf53a79791c11237187c5e9ffe",
+  "bytecode": "070a402f4040409241124145417041bd41d341e841fd010101010016d3d2842a67ce000c33117ba002ce002f117ba00516002aa105b41600a907b413c3038d7ea4c680005f010002020004d3752f75f31600160100020000020200402816010c330d7b0c0d0d140a5f5f6d61705f5f305f5f16004744cb01010c2f0e7b16010c0e0c140a5f5f6d61705f5f305f5f16004744cb0102a00316012aa103a0020d2aa10205160016015f0102010200403dd34a509e39a0011913077b0c0d0d140a5f5f6d61705f5f305f5f16004744cb01010c330f7b16000004170116010c30107ba00416012aa1040c0d0d140a5f5f6d61705f5f315f5f16004744cb010116012a0c0e0c140a5f5f6d61705f5f315f5f16004744cb010216001601a8a00516012ba10506160016015f010001020110d33344e43a13c3038d7ea4c680001701160016010c0d0d140a5f5f6d61705f5f315f5f16004744cb0101000502010003030111d329f7bbc916010c0d0d140a5f5f6d61705f5f305f5f16004744cb01012ca0032d16022b0201000203004020d336b4649fb4a0004513067b0c0d0d140a5f5f6d61705f5f305f5f16004744cb01011702a00316022b16012aa10316010c0e0c140a5f5f6d61705f5f305f5f16004744cb0102010001010008d34f58efe6b4a0004513067b1600a100010000000008d3e9745070b4a0004513067b03a101010000000008d3ba075553b4a0004513067b04a101",
+  "codeHash": "586fa6da29685ef84f75fad4267beef5a38c94e1fce3d6733835344846173ae2",
   "fieldsSig": {
     "names": [
       "numPayees",
+      "owner",
+      "paused",
       "numPayeesRegistered",
       "totalShares",
       "totalReleased",
@@ -13,6 +15,8 @@
     ],
     "types": [
       "U256",
+      "Address",
+      "Bool",
       "U256",
       "U256",
       "U256",
@@ -20,6 +24,8 @@
     ],
     "isMutable": [
       false,
+      true,
+      true,
       true,
       true,
       true,
@@ -155,6 +161,49 @@
       "returnTypes": [
         "U256"
       ]
+    },
+    {
+      "name": "updateShares",
+      "paramNames": [
+        "account",
+        "shares"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "updateOwner",
+      "paramNames": [
+        "newOwner"
+      ],
+      "paramTypes": [
+        "Address"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "pause",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    },
+    {
+      "name": "unpause",
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
     }
   ],
   "constants": [],
@@ -195,6 +244,20 @@
           "value": {
             "type": "U256",
             "value": "5"
+          }
+        },
+        {
+          "name": "NotAuthorized",
+          "value": {
+            "type": "U256",
+            "value": "6"
+          }
+        },
+        {
+          "name": "Paused",
+          "value": {
+            "type": "U256",
+            "value": "7"
           }
         }
       ]

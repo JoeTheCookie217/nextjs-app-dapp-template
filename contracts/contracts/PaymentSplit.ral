@@ -3,6 +3,8 @@
 
 Contract PaymentSplit(
     numPayees: U256,
+    mut owner: Address,
+    mut paused: Bool,
     mut numPayeesRegistered: U256,
     mut totalShares: U256,
     mut totalReleased: U256,
@@ -23,9 +25,13 @@ Contract PaymentSplit(
         AccountHasNoShares = 3
         AccountIsNotDuePayment = 4
         InvalidSetup = 5
+        NotAuthorized = 6
+        Paused = 7
     }
 
     // address[] public payees
+
+    // PUBLIC FUNCTIONS
 
     @using(preapprovedAssets = true, updateFields = true, checkExternalCaller = false,assetsInContract = true)
     pub fn receive(amount: U256) -> () {
@@ -56,6 +62,7 @@ Contract PaymentSplit(
 
     @using(updateFields = true, checkExternalCaller = false, assetsInContract = true)
     pub fn release(account: Address) -> () {
+        assert!(!paused, ErrorCodes.Paused)
         assert!(sharesMap[account] > 0, ErrorCodes.AccountHasNoShares)
         let payment = releasable(account)
         assert!(payment != 0, ErrorCodes.AccountIsNotDuePayment)
@@ -67,6 +74,7 @@ Contract PaymentSplit(
         emit PaymentReleased(account, payment)
     }
 
+    // VIEW FUNCTIONS
 
     @using(checkExternalCaller = false)
     pub fn releasable(account: Address)  -> (U256) {
@@ -81,5 +89,34 @@ Contract PaymentSplit(
          alreadyReleased:  U256
     ) -> (U256) {
         return (totalReceived * sharesMap[account]) / totalShares - alreadyReleased
+    }
+
+    // ADMIN FUNCTIONS
+
+    @using(updateFields = true)
+    pub fn updateShares(account: Address, shares: U256) -> () {
+        checkCaller!(callerAddress!() == owner, ErrorCodes.NotAuthorized)
+
+        let currentShares = sharesMap[account]
+        totalShares = totalShares - currentShares + shares
+        sharesMap[account] = shares
+    }
+
+    @using(updateFields = true)
+    pub fn updateOwner(newOwner: Address) -> () {
+        checkCaller!(callerAddress!() == owner, ErrorCodes.NotAuthorized)
+        owner = newOwner
+    }
+
+    @using(updateFields = true)
+    pub fn pause() -> () {
+        checkCaller!(callerAddress!() == owner, ErrorCodes.NotAuthorized)
+        paused = true
+    }
+
+    @using(updateFields = true)
+    pub fn unpause() -> () {
+        checkCaller!(callerAddress!() == owner, ErrorCodes.NotAuthorized)
+        paused = false
     }
 }
